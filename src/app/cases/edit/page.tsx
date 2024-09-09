@@ -16,7 +16,8 @@ import { z } from "zod";
 
 export default function CaseEdit() {
   const titleMaxLength = 50
-  const descriptionLength = 1000
+  const descriptionLength = 800
+  const productTypeMaxLength = 15
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     alert(JSON.stringify(values))
@@ -68,8 +69,9 @@ export default function CaseEdit() {
                 <FormItem className="flex flex-col">
                   <FormLabel>Product type</FormLabel>
                   <FormControl>
-                    <Input placeholder="Product type" {...field} />
+                    <Input placeholder="Product type" {...field} maxLength={productTypeMaxLength} />
                   </FormControl>
+                  <div className="ml-1">{field.value ? field.value.length : 0} / {productTypeMaxLength}</div>
                 </FormItem>
               )}
             />
