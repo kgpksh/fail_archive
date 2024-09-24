@@ -9,35 +9,45 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "lucide-react";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { format } from "date-fns"
 import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
+
+const titleMaxLength = 50
+const descriptionLength = 800
+const tagMaxLength = 15
+const TAGS = 'TAGS'
+const maxTagNum = 10
+
+const formSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }).max(50, { message: "Can not over 50 characters" }),
+  [TAGS]: z.array(z.object(
+    { tag: z.string().min(1, { message: "Each product type must be at least 1 character" }).max(10) }
+  )),
+  productPeriod: z.object({
+    from: z.date(),
+    to: z.date().optional(),
+  }),
+  description: z.string().min(1, { message: "Description is required" }).max(800, { message: "Can not over 800 characters" }),
+});
 
 export default function CaseEdit() {
-  const titleMaxLength = 50
-  const descriptionLength = 800
-  const productTypeMaxLength = 15
-
+  const [currentTag, setCurrentTag] = useState<string>("");
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     alert(JSON.stringify(values))
   }
 
-  const formSchema = z.object({
-    title: z.string()
-      .min(1, { message: 'Title is required' })
-      .max(titleMaxLength, { message: 'Can not over 20 characters' }),
-    productType: z.string().min(1, { message: 'Proudct type is required' }),
-    productPeriod: z.object({
-      from: z.date(),
-      to: z.date().optional()
-    }),
-    description: z.string().min(1, { message: 'Dscription is required' }).max(descriptionLength, { message: 'Can not over 500 characters' })
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: { TAGS: [] }
   })
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "TAGS"
+  });
 
   return (
     <div className="items-center justify-items-center p-8 pb-20 min-w-[800px] w-1/2 font-[family-name:var(--font-geist-sans)]">
@@ -60,64 +70,86 @@ export default function CaseEdit() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="productPeriod"
+            render={({ field }) => (
+              <FormItem className="flex flex-col mt-5">
+                <FormLabel>Product period</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[400px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value?.from ? (
+                          format(field.value.from, "PPP") + " - " +
+                          (field.value.to ? format(field.value.to, "PPP") : "continuing")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto" align="start">
+                    <Calendar
+                      mode="range"
+                      selected={field.value}
+                      onSelect={(range) => field.onChange(range)}
+                      captionLayout="dropdown"
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
 
-          <div className="flex mt-5 space-x-4">
-            <FormField
-              control={form.control}
-              name="productType"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Product type</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Product type" {...field} maxLength={productTypeMaxLength} />
-                  </FormControl>
-                  <div className="ml-1">{field.value ? field.value.length : 0} / {productTypeMaxLength}</div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="productPeriod"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Product period</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[400px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value?.from ? (
-                            format(field.value.from, "PPP") + " - " +
-                            (field.value.to ? format(field.value.to, "PPP") : "continuing")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto" align="start">
-                      <Calendar
-                        mode="range"
-                        selected={field.value}
-                        onSelect={(range) => field.onChange(range)}
-                        captionLayout="dropdown"
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name={TAGS}
+            render={({ field }) => (
+              <FormItem className="flex flex-col mt-5">
+                <FormLabel>Product tags</FormLabel>
+                <div className="flex">
+                  <Input
+                  value={currentTag}
+                    onChange={tag => setCurrentTag(tag.target.value)}
+                    placeholder="Tag"
+                    className="w-1/2"
+                    maxLength={tagMaxLength}
+                  />
+                  <Button
+                    type="button"
+                    className="ml-3"
+                    disabled={fields.length >= maxTagNum}
+                    onClick={() => {
+                        append({ tag: currentTag })
+                        setCurrentTag("")
+                      }
+                    }
+                  >
+                    Add tag
+                  </Button>
+                </div>
+                <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
+                <div className="w-full h-full border-2 rounded-xl">
+                  <div className="flex justify-end h-full mr-2">{fields.length} / {maxTagNum}</div>
+                  {fields.map((tag, index) => (
+                    <Badge className="ml-2 my-2 bg-blue-400" onClick={() => remove(index)}>{tag.tag} x</Badge>
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
