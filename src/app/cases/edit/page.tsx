@@ -75,7 +75,7 @@ export default function CaseEdit() {
             name="productPeriod"
             render={({ field }) => (
               <FormItem className="flex flex-col mt-5">
-                <FormLabel>Product period</FormLabel>
+                <FormLabel className="text-2xl">Product period</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -118,10 +118,10 @@ export default function CaseEdit() {
             name={TAGS}
             render={({ field }) => (
               <FormItem className="flex flex-col mt-5">
-                <FormLabel>Product tags</FormLabel>
+                <FormLabel className="text-2xl">Product tags</FormLabel>
                 <div className="flex">
                   <Input
-                  value={currentTag}
+                    value={currentTag}
                     onChange={tag => setCurrentTag(tag.target.value)}
                     placeholder="Tag"
                     className="w-1/2"
@@ -130,8 +130,11 @@ export default function CaseEdit() {
                   <Button
                     type="button"
                     className="ml-3"
-                    disabled={fields.length >= maxTagNum}
+                    disabled={fields.length >= maxTagNum || currentTag?.length < 1}
                     onClick={() => {
+                        if(currentTag?.length < 1) {
+                          return
+                        }
                         append({ tag: currentTag })
                         setCurrentTag("")
                       }
@@ -141,10 +144,16 @@ export default function CaseEdit() {
                   </Button>
                 </div>
                 <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
+                
+                
                 <div className="w-full h-full border-2 rounded-xl">
-                  <div className="flex justify-end h-full mr-2">{fields.length} / {maxTagNum}</div>
+                  <div className="flex justify-between p-2">
+                    <div className="font-bold">Tags</div>
+                    <div>{fields.length} / {maxTagNum}</div>
+                  </div>
+                  
                   {fields.map((tag, index) => (
-                    <Badge className="ml-2 my-2 bg-blue-400" onClick={() => remove(index)}>{tag.tag} x</Badge>
+                    <Badge className="ml-2 my-2 bg-blue-400 cursor-pointer" onClick={() => remove(index)}>{tag.tag} x</Badge>
                   ))}
                 </div>
               </FormItem>
@@ -156,7 +165,7 @@ export default function CaseEdit() {
             name="description"
             render={({ field }) => (
               <FormItem className="mt-5">
-                <FormLabel>Description</FormLabel>
+                <FormLabel className="text-2xl">Description</FormLabel>
                 <FormDescription>
                   Tell us about your service and any reflections you have.
                 </FormDescription>
