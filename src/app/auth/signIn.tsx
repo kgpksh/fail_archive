@@ -26,7 +26,7 @@ const SignIn = () => {
                             const { data : dataUser, error } = await auth.signInWithOAuth({
                                 provider: 'google',
                                 options: {
-                                    redirectTo: 'http://localhost:3000/',
+                                    redirectTo: '/',
                                 }
                             })
                         }}
