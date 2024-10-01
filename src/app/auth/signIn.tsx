@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import Image from "next/image"
-import { createClient } from "@/utils/supabase/client"
-import { useRouter } from "next/navigation"
+import { auth } from "@/utils/supabase/client"
+
 const SignIn = () => {
     return (
         <Dialog modal={false}>
@@ -23,7 +23,7 @@ const SignIn = () => {
                         height={50}
                         alt="Signup with Google"
                         onClick={async () => {
-                            const { data : dataUser, error } = await createClient().auth.signInWithOAuth({
+                            const { data : dataUser, error } = await auth.signInWithOAuth({
                                 provider: 'google',
                                 options: {
                                     redirectTo: 'http://localhost:3000/',
