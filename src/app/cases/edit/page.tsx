@@ -14,7 +14,8 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { format } from "date-fns"
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
-
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 const titleMaxLength = 50
 const descriptionLength = 800
 const tagMaxLength = 15
@@ -35,8 +36,24 @@ const formSchema = z.object({
 
 export default function CaseEdit() {
   const [currentTag, setCurrentTag] = useState<string>("");
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    alert(JSON.stringify(values))
+  
+  const router = useRouter()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const supabase = createClient()
+    const {data} = await supabase.rpc('insert_tags_and_cases', {
+      case_title : values.title,
+      case_started_date: values.productPeriod.from,
+      case_ended_date: values.productPeriod.to,
+      case_description: values.description,
+      tags: values[TAGS].map((tag) => tag.tag),
+      case_user_id: (await supabase.auth.getUser()).data.user?.id
+    })
+    console.log(data)
+    if(data) {
+      
+      router.push('/')
+    }
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
