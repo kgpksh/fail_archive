@@ -16,6 +16,7 @@ import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { ScrollArea } from "@/components/ui/scroll-area";
 const titleMaxLength = 50
 const descriptionLength = 800
 const tagMaxLength = 15
@@ -36,6 +37,7 @@ const formSchema = z.object({
 
 export default function CaseEdit() {
   const [currentTag, setCurrentTag] = useState<string>("");
+  const [tagList, setTagList] = useState<string[]>([])
   
   const router = useRouter()
 
@@ -49,7 +51,6 @@ export default function CaseEdit() {
       tags: values[TAGS].map((tag) => tag.tag),
       case_user_id: (await supabase.auth.getUser()).data.user?.id
     })
-    console.log(data)
     if(data) {
       
       router.push('/')
@@ -137,41 +138,74 @@ export default function CaseEdit() {
               <FormItem className="flex flex-col mt-5">
                 <FormLabel className="text-2xl">Product tags</FormLabel>
                 <div className="flex">
-                  <Input
-                    value={currentTag}
-                    onChange={tag => setCurrentTag(tag.target.value)}
-                    placeholder="Tag"
-                    className="w-1/2"
-                    maxLength={tagMaxLength}
-                  />
-                  <Button
-                    type="button"
-                    className="ml-3"
-                    disabled={fields.length >= maxTagNum || currentTag?.length < 1}
-                    onClick={() => {
-                        if(currentTag?.length < 1) {
-                          return
+                <div className="w-3/4">
+                  <div className="flex items-center">
+                    <Input
+                        value={currentTag}
+                        onChange={
+                          async (tag) => {
+                            const input = tag.target.value
+                            setCurrentTag(input)
+                            if (input?.length > 0) {
+                              try {
+                                const tagsRes = await fetch(`/searchTags/?word=${input}`);
+                                const calledTagsList = await tagsRes.json();
+                                setTagList(calledTagsList)
+                              } catch (error) {
+                              }
+                            } else if(input === null || input?.length === 0) {
+                              setTagList([])
+                            }
+                          }
                         }
-                        append({ tag: currentTag })
-                        setCurrentTag("")
+                        className="w-80"
+                        placeholder="Tag"
+                        maxLength={tagMaxLength}
+                      />
+                    
+                    <Button
+                      type="button"
+                      className="ml-3"
+                      disabled={fields.length >= maxTagNum || currentTag?.length < 1 || fields.map((tag) => tag.tag).includes(currentTag)}
+                      onClick={() => {
+                          if(currentTag?.length < 1) {
+                            return
+                          }
+                          append({ tag: currentTag })
+                          setCurrentTag("")
+                        }
                       }
-                    }
-                  >
-                    Add tag
-                  </Button>
-                </div>
-                <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
-                
-                
-                <div className="w-full h-full border-2 rounded-xl">
-                  <div className="flex justify-between p-2">
-                    <div className="font-bold">Tags</div>
-                    <div>{fields.length} / {maxTagNum}</div>
+                    >
+                      Create tag
+                    </Button>
                   </div>
-                  
-                  {fields.map((tag, index) => (
-                    <Badge className="ml-2 my-2 bg-blue-400 cursor-pointer" onClick={() => remove(index)}>{tag.tag} x</Badge>
-                  ))}
+                  <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
+                  <ScrollArea className="w-full h-32 rounded-md border p-4">
+                    {(tagList.filter((duplicated) => !fields.map(appendedTag => appendedTag.tag).includes(duplicated))).map((tag) => 
+                      <div
+                        className={`w-full text-center ${fields.length < maxTagNum ? 'cursor-pointer bg-blue-300' : 'bg-gray-50'} mb-2`}
+                        onClick={() => {
+                          if(fields.length < maxTagNum) {
+                            append({'tag' : tag})
+                          }
+                        }}
+                      >
+                        {tag}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </div>
+
+                <div className="w-full h-48 border-2 rounded-xl ml-5">
+                    <div className="flex justify-between p-2">
+                      <div className="font-bold">Tags</div>
+                      <div>{fields.length} / {maxTagNum}</div>
+                    </div>
+                    
+                    {fields.map((tag, index) => (
+                      <Badge className="ml-2 my-2 bg-blue-400 cursor-pointer" onClick={() => remove(index)}>{tag.tag} x</Badge>
+                    ))}
+                  </div>
                 </div>
               </FormItem>
             )}

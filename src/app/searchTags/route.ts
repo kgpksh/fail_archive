@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 const MAX_RESULT_NUM = 10
-const DEV_TAGS: string[] = ['SaaS', 'Mobile', 'AI', 'asdf', 'sss', 'sadfs', 'ASDHFKALS','adsfkh', 'dsahfksadf', 'sadhfas', 'sadfh;',' dsahlkf']
+const DEV_TAGS: string[] = ['SaaS', 'Mobile', 'AI', 'asdf', 'sss', 'sadfs', 'ASDHFKALS','adsfkh', 'dsahfksadf', 'sadhfas', 'sadfh;',' dsahlkf', 'kkk', 'asfd']
 
 export async function GET(req: NextRequest) {
     const word = req.nextUrl.searchParams.get('word')
