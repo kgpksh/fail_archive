@@ -17,6 +17,9 @@ import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/hooks/use-toast";
+import { useDebouncedCallback } from 'use-debounce';
+
 const titleMaxLength = 50
 const descriptionLength = 800
 const tagMaxLength = 15
@@ -41,10 +44,25 @@ const formSchema = z.object({
 export default function CaseEdit() {
   const [currentTag, setCurrentTag] = useState<string>("");
   const [tagList, setTagList] = useState<string[]>([])
+  const [sending, setSending] = useState<boolean>(false)
+  const {toast} = useToast()
+  const tagSearch = useDebouncedCallback(async (input) => {
+    if (input?.length > 0) {
+      try {
+        const tagsRes = await fetch(`/searchTags/?word=${input}`);
+        const calledTagsList = await tagsRes.json();
+        setTagList(calledTagsList)
+      } catch (error) {
+      }
+    } else if(input === null || input?.length === 0) {
+      setTagList([])
+    }
+  }, 250)
   
   const router = useRouter()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setSending(true)
     const supabase = createClient()
     const {data} = await supabase.rpc('insert_tags_and_cases', {
       case_title : values.title,
@@ -56,7 +74,18 @@ export default function CaseEdit() {
     })
     if(data) {
       
+      toast({
+        title: "Edit complete"
+      })
       router.push('/')
+      setSending(false)
+    } else {
+      setSending(false)
+      toast({
+        variant: "destructive",
+        title: "Something wrong happened",
+        description: "Try again"
+      })
     }
   }
 
@@ -151,16 +180,7 @@ export default function CaseEdit() {
                           async (tag) => {
                             const input = tag.target.value
                             setCurrentTag(input)
-                            if (input?.length > 0) {
-                              try {
-                                const tagsRes = await fetch(`/searchTags/?word=${input}`);
-                                const calledTagsList = await tagsRes.json();
-                                setTagList(calledTagsList)
-                              } catch (error) {
-                              }
-                            } else if(input === null || input?.length === 0) {
-                              setTagList([])
-                            }
+                            tagSearch(input)
                           }
                         }
                         className="w-80"
@@ -236,7 +256,7 @@ export default function CaseEdit() {
               </FormItem>
             )}
           />
-          <Button className="mt-5">Submit</Button>
+          <Button className="mt-5" disabled={sending}>Submit</Button>
         </form>
       </Form>
     </div>
