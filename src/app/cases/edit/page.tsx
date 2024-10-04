@@ -30,7 +30,10 @@ const formSchema = z.object({
   )),
   productPeriod: z.object({
     from: z.date(),
-    to: z.date().optional(),
+    to: z.preprocess(
+      (input) => input === undefined ? null : input,  // undefined 값을 null로 변환
+      z.date().nullable() // null을 허용
+    )
   }),
   description: z.string().min(1, { message: "Description is required" }).max(800, { message: "Can not over 800 characters" }),
 });
@@ -117,7 +120,9 @@ export default function CaseEdit() {
                   <PopoverContent className="w-auto" align="start">
                     <Calendar
                       mode="range"
-                      selected={field.value}
+                      selected={
+                        field.value ? { from: field.value.from, to: field.value.to ?? undefined } : undefined
+                      }
                       onSelect={(range) => field.onChange(range)}
                       captionLayout="dropdown"
                       disabled={(date) =>
