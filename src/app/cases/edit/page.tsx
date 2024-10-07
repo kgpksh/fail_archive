@@ -15,7 +15,7 @@ import { format } from "date-fns"
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/hooks/use-toast";
 import { useDebouncedCallback } from 'use-debounce';
@@ -45,7 +45,8 @@ export default function CaseEdit() {
   const [currentTag, setCurrentTag] = useState<string>("");
   const [tagList, setTagList] = useState<string[]>([])
   const [sending, setSending] = useState<boolean>(false)
-  const {toast} = useToast()
+  const { toast } = useToast()
+  const { push } = useRouter()
   const tagSearch = useDebouncedCallback(async (input) => {
     if (input?.length > 0) {
       try {
@@ -54,39 +55,37 @@ export default function CaseEdit() {
         setTagList(calledTagsList)
       } catch (error) {
       }
-    } else if(input === null || input?.length === 0) {
+    } else if (input === null || input?.length === 0) {
       setTagList([])
     }
-  }, 250)
-  
-  const router = useRouter()
+  }, 150)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setSending(true)
+    
     const supabase = createClient()
-    const {data} = await supabase.rpc('insert_tags_and_cases', {
-      case_title : values.title,
+    const { data } = await supabase.rpc('insert_tags_and_cases', {
+      case_title: values.title,
       case_started_date: values.productPeriod.from,
       case_ended_date: values.productPeriod.to,
       case_description: values.description,
       tags: values[TAGS].map((tag) => tag.tag),
       case_user_id: (await supabase.auth.getUser()).data.user?.id
     })
-    if(data) {
-      
+    if (data) {
+
       toast({
         title: "Edit complete"
       })
-      router.push('/')
-      setSending(false)
+      push('/')
     } else {
-      setSending(false)
       toast({
         variant: "destructive",
         title: "Something wrong happened",
         description: "Try again"
       })
     }
+    // setSending(false)
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -172,9 +171,9 @@ export default function CaseEdit() {
               <FormItem className="flex flex-col mt-5">
                 <FormLabel className="text-2xl">Product tags</FormLabel>
                 <div className="flex">
-                <div className="w-3/4">
-                  <div className="flex items-center">
-                    <Input
+                  <div className="w-3/4">
+                    <div className="flex items-center">
+                      <Input
                         value={currentTag}
                         onChange={
                           async (tag) => {
@@ -187,46 +186,46 @@ export default function CaseEdit() {
                         placeholder="Tag"
                         maxLength={tagMaxLength}
                       />
-                    
-                    <Button
-                      type="button"
-                      className="ml-3"
-                      disabled={fields.length >= maxTagNum || currentTag?.length < 1 || fields.map((tag) => tag.tag).includes(currentTag)}
-                      onClick={() => {
-                          if(currentTag?.length < 1) {
+
+                      <Button
+                        type="button"
+                        className="ml-3"
+                        disabled={fields.length >= maxTagNum || currentTag?.length < 1 || fields.map((tag) => tag.tag).includes(currentTag)}
+                        onClick={() => {
+                          if (currentTag?.length < 1) {
                             return
                           }
                           append({ tag: currentTag })
                           setCurrentTag("")
                         }
-                      }
-                    >
-                      Create tag
-                    </Button>
-                  </div>
-                  <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
-                  <ScrollArea className="w-full h-32 rounded-md border p-4">
-                    {(tagList.filter((duplicated) => !fields.map(appendedTag => appendedTag.tag).includes(duplicated))).map((tag) => 
-                      <div
-                        className={`w-full text-center ${fields.length < maxTagNum ? 'cursor-pointer bg-blue-300' : 'bg-gray-50'} mb-2`}
-                        onClick={() => {
-                          if(fields.length < maxTagNum) {
-                            append({'tag' : tag})
-                          }
-                        }}
+                        }
                       >
-                        {tag}
-                      </div>
-                    )}
-                  </ScrollArea>
-                </div>
+                        Create tag
+                      </Button>
+                    </div>
+                    <div className="ml-1">{currentTag ? currentTag.length : 0} / {tagMaxLength}</div>
+                    <ScrollArea className="w-full h-32 rounded-md border p-4">
+                      {(tagList.filter((duplicated) => !fields.map(appendedTag => appendedTag.tag).includes(duplicated))).map((tag) =>
+                        <div
+                          className={`w-full text-center ${fields.length < maxTagNum ? 'cursor-pointer bg-blue-300' : 'bg-gray-50'} mb-2`}
+                          onClick={() => {
+                            if (fields.length < maxTagNum) {
+                              append({ 'tag': tag })
+                            }
+                          }}
+                        >
+                          {tag}
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </div>
 
-                <div className="w-full h-48 border-2 rounded-xl ml-5">
+                  <div className="w-full h-48 border-2 rounded-xl ml-5">
                     <div className="flex justify-between p-2">
                       <div className="font-bold">Tags</div>
                       <div>{fields.length} / {maxTagNum}</div>
                     </div>
-                    
+
                     {fields.map((tag, index) => (
                       <Badge className="ml-2 my-2 bg-blue-400 cursor-pointer" onClick={() => remove(index)}>{tag.tag} x</Badge>
                     ))}
