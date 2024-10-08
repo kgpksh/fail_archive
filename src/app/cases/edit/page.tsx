@@ -84,8 +84,8 @@ export default function CaseEdit() {
         title: "Something wrong happened",
         description: "Try again"
       })
+      setSending(false)
     }
-    // setSending(false)
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
