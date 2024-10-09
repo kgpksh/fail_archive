@@ -29,8 +29,8 @@ const maxTagNum = 10
 const formSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }).max(50, { message: "Can not over 50 characters" }),
   [TAGS]: z.array(z.object(
-    { tag: z.string().min(1, { message: "Each product type must be at least 1 character" }).max(10) }
-  )),
+    { tag: z.string().min(1, { message: "Each product type must be at least 1 character" }).max(tagMaxLength) }
+  )).max(maxTagNum),
   productPeriod: z.object({
     from: z.date(),
     to: z.preprocess(
