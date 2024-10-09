@@ -31,10 +31,10 @@ export default async function Home() {
                 </div>
               </div>
               <HoverCard>
-                <HoverCardTrigger asChild className="ml-6">
+                <HoverCardTrigger asChild className={`${item.tags.length === 0 ? 'hidden' : ''} ml-6`}>
                   <Badge>Tags</Badge>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-full grid grid-rows-2 grid-flow-col gap-2">
+                <HoverCardContent className="w-min">
                   {item.tags.map((tag, index) => (
                     <Badge key={index} className="bg-blue-400 cursor-default hover:bg-blue-400">{tag.tag}</Badge>
                   ))}
