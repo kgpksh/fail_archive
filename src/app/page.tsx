@@ -1,4 +1,4 @@
-import List from "@/components/list";
+import CaseList from "@/components/caseList";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
@@ -30,6 +30,8 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const {data, error} = await query
   
   return (
-    <List data={data ? data : []}></List>
+    <div className="w-7/12 flex flex-col items-center">
+      <CaseList data={data ? data : []}></CaseList>
+    </div>
   )
 }

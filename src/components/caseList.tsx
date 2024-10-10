@@ -7,17 +7,17 @@ interface Item {
     created_at: string,
     tags: string[]
 }
-export default function List({ data }: { data: Item[] }) {
+export default function CaseList({ data }: { data: Item[] }) {
     
     return (
-        <div className="w-7/12 flex flex-col items-center">
+        <div className="w-full ">
           {data?
           data.map((item : Item) => (
             <div
               key={item.id}
-              className="flex items-center w-full h-20 p-3 mt-2 hover:bg-gray-200 cursor-pointer"
+              className="flex items-center justify-between w-full h-20 p-3 mt-2 hover:bg-gray-200 cursor-pointer"
             >
-              <div className="flex-9">
+              <div>
                 <div className="text-lg font-bold">
                   {item.title}
                 </div>
