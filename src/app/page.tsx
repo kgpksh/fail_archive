@@ -1,5 +1,6 @@
 import CaseList from "@/components/caseList";
 import { createClient } from "@/utils/supabase/server";
+import PageListController from "./pageListControllerCompoonents/pageListController";
 
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
   const NUM_OF_ITEM_PER_PAGE = 10
@@ -31,7 +32,8 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   
   return (
     <div className="w-7/12 flex flex-col items-center">
-      <CaseList data={data ? data : []}></CaseList>
+      {data?.length !== 0 ? <CaseList data={data ? data : []}></CaseList> : <div className="text-2xl font-bold mb-4">No result</div>}
+      <PageListController/>
     </div>
   )
 }
