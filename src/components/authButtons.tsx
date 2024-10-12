@@ -9,11 +9,11 @@ export default async function AuthButtons() {
   } = await createClient().auth.getUser();
 
   return user ? (
-    <form action={signOut}>
+    <form action={signOut} className="ml-auto">
       <Button>Sign out</Button>
     </form>
   ) : (
-      <Button>
+      <Button className="ml-auto">
         <Link href={'/login'}>Sign In</Link>
       </Button>
     )
