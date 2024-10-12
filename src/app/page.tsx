@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   return (
     <div className="w-7/12 flex flex-col items-center">
       {data?.length !== 0 ? <CaseList data={data ? data : []}></CaseList> : <div className="text-2xl font-bold mb-4">No result</div>}
-      <PageListController/>
+      <PageListController noResult={data?.length === 0}/>
     </div>
   )
 }
