@@ -50,7 +50,7 @@ export default function PageListController({ noResult }: { noResult: boolean }) 
                     <Search onClick={searchAction} type="submit" className="cursor-pointer self-center ml-2" />
                     
                 </div>
-                <Link href={'/cases/edit'}><Button className="mt-5"><PencilIcon />Add case</Button></Link>
+                <Link href={'/cases/write'}><Button className="mt-5"><PencilIcon />Add case</Button></Link>
                 
             </div>
 
