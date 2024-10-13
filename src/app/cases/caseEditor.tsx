@@ -19,18 +19,17 @@ import { useRouter } from 'next/navigation'
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/hooks/use-toast";
 import { useDebouncedCallback } from 'use-debounce';
-import { DefaultValue, Editing, Writing, formSchema, maxTagNum, tagMaxLength, TAGS } from "./edittingType";
+import { DefaultValue, Editing, formSchema, maxTagNum, tagMaxLength, TAGS } from "./edittingType";
 
 const TITLE_MAX_LENGTH = 50
 const DESCRIPTION_LENGTH = 800
-
 
 export default function CaseEditor({ defaultValue, id }: { defaultValue: DefaultValue, id: number | null }) {
   const [currentTag, setCurrentTag] = useState<string>("");
   const [tagList, setTagList] = useState<string[]>([])
   const [sending, setSending] = useState<boolean>(false)
   const { toast } = useToast()
-  const { push } = useRouter()
+  const { push, refresh } = useRouter()
   const tagSearch = useDebouncedCallback(async (input) => {
     if (input?.length > 0) {
       try {
@@ -44,9 +43,9 @@ export default function CaseEditor({ defaultValue, id }: { defaultValue: Default
     }
   }, 150)
 
-  const convertTosupabaseForm = async (values: Editing) => {
+  const createCase = async (values: Editing) => {
     const supabase = createClient()
-    return {
+    const data = {
       case_title: values.title,
       case_started_date: values.productPeriod.from,
       case_ended_date: values.productPeriod.to,
@@ -54,18 +53,20 @@ export default function CaseEditor({ defaultValue, id }: { defaultValue: Default
       tags: values[TAGS].map((tag) => tag.tag),
       case_user_id: (await supabase.auth.getUser()).data.user?.id
     }
-  }
-
-  const createCase = async (values: Editing) => {
-    const supabase = createClient()
-    return await supabase.rpc('insert_tags_and_cases', await convertTosupabaseForm(values))
+    return await supabase.rpc('insert_tags_and_cases', data)
   }
 
   const editCase = async (values: Editing) => {
     const supabase = createClient()
-    return await supabase.from('fail_cases')
-      .update(await convertTosupabaseForm(values))
-      .eq('id', id)
+    const data = {
+      case_id: id,
+      case_title: values.title,
+      case_started_date: values.productPeriod.from,
+      case_ended_date: values.productPeriod.to,
+      case_description: values.description,
+      case_tags: values[TAGS].map((tag) => tag.tag)
+    }
+    return await supabase.rpc('update_tags_and_cases', data)
   }
 
   const decideCreatingOrEditing = (values: Editing) => {
@@ -85,6 +86,7 @@ export default function CaseEditor({ defaultValue, id }: { defaultValue: Default
         title: "Edit complete"
       })
       push('/')
+      refresh()
     } else {
       toast({
         variant: "destructive",
@@ -105,9 +107,9 @@ export default function CaseEditor({ defaultValue, id }: { defaultValue: Default
     control: form.control,
     name: "TAGS"
   });
-
+  
   return (
-    <div className="items-center justify-items-center p-8 pb-20 min-w-[800px] w-1/2 font-[family-name:var(--font-geist-sans)]">
+    <div className="mx-auto p-8 pb-20 min-w-[800px] w-1/2 font-[family-name:var(--font-geist-sans)]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField

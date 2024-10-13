@@ -2,8 +2,9 @@ import { createClient } from "@/utils/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import CaseDeleteButton from "../../caseDeleteButton";
 
-export default async function ReadCase({ params: { id } }: { params: { id: string } }) {
+export default async function ReadCase({ params: { id } }: { params: { id: number } }) {
     const supabase = createClient()
     const uuid = (await supabase.auth.getUser()).data.user?.id
     const { data, error } = await supabase
@@ -19,11 +20,10 @@ export default async function ReadCase({ params: { id } }: { params: { id: strin
                 ended_date,
                 description
             `)
-        .eq('id', parseInt(id))
+        .eq('id',id)
         .single()
     
     const isTagExists = data?.tags.length > 0
-    console.log(uuid, data?.user_id)
 
     return (
         <div className="w-full h-full">
@@ -58,19 +58,11 @@ export default async function ReadCase({ params: { id } }: { params: { id: strin
                     {
                         uuid === data?.user_id ?
                         <div className="flex justify-between">
-                            <Link
-                                href={{
-                                    pathname:'/cases/edit',
-                                    query: {
-                                        
-                                    }
-                                }}
-                                as={'/cases/edit'}
-                            >
+                            <Link href={`/cases/edit/${id}`} >
                                 <Button>Modify</Button>
                             </Link>
                             
-                            <Button>Delete</Button>
+                            <CaseDeleteButton id={id}/>
                         </div>
                         : ''
                     }

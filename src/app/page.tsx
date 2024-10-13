@@ -17,7 +17,8 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
     modified_at,
     tags
   `)
-  .range((pageNum - 1) * NUM_OF_ITEM_PER_PAGE, pageNum * NUM_OF_ITEM_PER_PAGE - 1);
+  .range((pageNum - 1) * NUM_OF_ITEM_PER_PAGE, pageNum * NUM_OF_ITEM_PER_PAGE - 1)
+  .order('created_at', { ascending: false });
 
   if (tags.length > 0) {
     query = query

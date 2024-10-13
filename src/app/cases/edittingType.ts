@@ -10,10 +10,18 @@ const formSchema = z.object({
       { tag: z.string().min(1, { message: "Each product type must be at least 1 character" }).max(tagMaxLength) }
     )).max(maxTagNum),
     productPeriod: z.object({
-      from: z.date(),
+      from: z.preprocess(
+        (input) => typeof input === 'string' ? new Date(input) : input,
+        z.date()
+      ),
       to: z.preprocess(
-        (input) => input === undefined ? null : input,  // undefined 값을 null로 변환
-        z.date().nullable() // null을 허용
+        (input) => {
+          if (typeof input === 'string') {
+            return new Date(input);  // ISO 형식의 문자열도 Date로 변환
+          }
+          return input === undefined ? null : input;
+        },
+        z.date().nullable()
       )
     }),
     description: z.string().min(1, { message: "Description is required" }).max(800, { message: "Can not over 800 characters" }),

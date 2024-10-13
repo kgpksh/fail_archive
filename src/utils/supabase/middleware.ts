@@ -41,9 +41,18 @@ export const updateSession = async (request: NextRequest) => {
 
     // protected routes
     if (request.nextUrl.pathname.startsWith("/cases/write")
-      && request.nextUrl.pathname.startsWith("/cases/edit")
       && user.error) {
       return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (request.nextUrl.pathname.startsWith("/cases/edit")) {
+      if (user.error) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      const id = parseInt(request.nextUrl.pathname.split('/')[3])
+      const userId = (await supabase.from('fail_cases').select('user_id').eq('id', id).single()).data?.user_id
+      if (user.data.user?.id !== userId) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
     }
 
     // if (request.nextUrl.pathname === "/" && !user.error) {
