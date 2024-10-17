@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
       >
         <Header/>
-        <main className="w-7/12 h-full mx-auto">
+        <main className="w-10/12 md:w-7/12 h-full mx-auto">
           {children}
         </main>
         <Toaster/>

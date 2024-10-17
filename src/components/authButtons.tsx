@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { signOut } from "@/app/login/actions"
+import { signOut } from "@/app/(auth-pages)/actions"
 
 export default async function AuthButtons() {
   const {
@@ -10,11 +10,11 @@ export default async function AuthButtons() {
 
   return user ? (
     <form action={signOut} className="ml-auto">
-      <Button>Sign out</Button>
+      <Button>Log out</Button>
     </form>
   ) : (
       <Button className="ml-auto">
-        <Link href={'/login'}>Sign In</Link>
+        <Link href={'/login'}>Log In</Link>
       </Button>
     )
 }
