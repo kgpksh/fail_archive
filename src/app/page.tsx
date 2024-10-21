@@ -12,6 +12,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   .from('fail_cases')
   .select(`
     id,
+    nickname,
     title,
     created_at,
     modified_at,

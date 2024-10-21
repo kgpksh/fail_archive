@@ -1,5 +1,6 @@
 "use server"
 
+import { createAdminClient } from "@/utils/supabase/admin_role_server";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -66,5 +67,14 @@ const googleSignIn = async () => {
   }
 };
 
+const deactiveAccount = async (userId : string) => {
+  const supabase = createAdminClient();
+  const { error } = await supabase.auth.admin.deleteUser(userId,true)
 
-export { signOut, googleSignIn, emailSignUpNewUser, signInWithEmail }
+  if (error) {
+    return error.message
+  }
+};
+
+
+export { signOut, googleSignIn, emailSignUpNewUser, signInWithEmail, deactiveAccount }

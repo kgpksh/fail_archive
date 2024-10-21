@@ -1,6 +1,7 @@
 interface CaseListItem {
     id: number,
     title: string,
+    nickname: string,
     modified_at: string,
     created_at: string,
     tags: string[]
