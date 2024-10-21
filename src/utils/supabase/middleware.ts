@@ -44,6 +44,14 @@ export const updateSession = async (request: NextRequest) => {
       && user.error) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
+    if ((request.nextUrl.pathname.startsWith("/login")
+      || request.nextUrl.pathname.startsWith("/register")
+      || request.nextUrl.pathname.startsWith("/forgot-password"))
+    && !(user.error)
+    ) {
+        return NextResponse.redirect(new URL("/", request.url));
+    }
+
     if (request.nextUrl.pathname.startsWith("/cases/edit")) {
       if (user.error) {
         return NextResponse.redirect(new URL("/login", request.url));
@@ -53,6 +61,13 @@ export const updateSession = async (request: NextRequest) => {
       if (user.data.user?.id !== userId) {
         return NextResponse.redirect(new URL("/", request.url));
       }
+    }
+
+    if((request.nextUrl.pathname.startsWith("/profile")
+      || request.nextUrl.pathname.startsWith("/reset-password"))
+    && user.error
+    ) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     // if (request.nextUrl.pathname === "/" && !user.error) {

@@ -10,6 +10,7 @@ import Image from "next/image"
 import { useCallback, useEffect, useRef, useState } from "react"
 import AccountRemovingButton from "./accountRemovingButton"
 import { SubmitButton } from "@/components/ui/submitButton"
+import Link from "next/link"
 
 let isDelete = false
 
@@ -174,6 +175,9 @@ export default function Profile({ userId }: { userId: string }) {
                 />
             </div>
             <Button onClick={saveProfile} className="self-end">Save</Button>
+            <Link href={'/reset-password'} className="flex mt-8">
+                <Button>Reset password</Button>
+            </Link>
             <AccountRemovingButton userId={userId}></AccountRemovingButton>
         </div>
     )

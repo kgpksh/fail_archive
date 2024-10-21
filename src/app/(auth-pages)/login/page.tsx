@@ -21,6 +21,7 @@ export default async function LoginForm() {
                         Register
                     </Link>
                 </p>
+
                 <Label htmlFor="email" className="blocktext-sm font-medium text-gray-600">
                     Email
                 </Label>
@@ -43,6 +44,12 @@ export default async function LoginForm() {
                     className="w-full p-3 border border-gray-300 rounded-md"
                     required
                 />
+                <Link
+                    className="text-xs text-foreground underline mb-2"
+                    href="/forgot-password"
+                >
+                    Forgot Password?
+                </Link>
                 <SubmitButton pendingText="Now log in..." formAction={async (formData) => {
                     const errorMessage = await signInWithEmail(formData)
                     if (errorMessage) {
