@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     icon: "/favicon.png"
   }
 };
-
+// Commit for remove Vercel toolbar
 export default function RootLayout({
   children,
 }: Readonly<{
