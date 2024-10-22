@@ -33,9 +33,10 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const {data, error} = await query
   
   return (
-    <div className="flex flex-col">
-      <div className="justify-center">
-        {data?.length !== 0 ? <CaseList data={data ? data : []}></CaseList> : <div className="text-2xl font-bold mb-4">No result</div>}
+    <div className="flex flex-col h-full">
+      <div className="h-full justify-center">
+        {data?.length !== 0 ? <CaseList data={data ? data : []}></CaseList> :
+        <div className="flex justify-center items centertext-2xl font-bold mb-4">No searched result</div>}
       </div>
       
       <PageListController noResult={data?.length === 0}/>
