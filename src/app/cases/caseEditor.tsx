@@ -22,7 +22,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { DefaultValue, Editing, formSchema, maxTagNum, tagMaxLength, TAGS } from "./edittingType";
 
 const TITLE_MAX_LENGTH = 50
-const DESCRIPTION_LENGTH = 1000
+const DESCRIPTION_LENGTH = 2000
 
 export default function CaseEditor({ defaultValue, id }: { defaultValue: DefaultValue, id: number | null }) {
   const [currentTag, setCurrentTag] = useState<string>("");
