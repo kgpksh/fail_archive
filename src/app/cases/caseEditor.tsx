@@ -80,6 +80,7 @@ export default function CaseEditor({ defaultValue, id }: { defaultValue: Default
     setSending(true)
 
     const { data, error } = await decideCreatingOrEditing(values)
+    console.log(data, error)
     if (data) {
       toast({
         title: "Edit complete"
