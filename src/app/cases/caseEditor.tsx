@@ -19,10 +19,9 @@ import { useRouter } from 'next/navigation'
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/hooks/use-toast";
 import { useDebouncedCallback } from 'use-debounce';
-import { DefaultValue, Editing, formSchema, maxTagNum, tagMaxLength, TAGS } from "./edittingType";
+import { DefaultValue, Editing, formSchema, maxTagNum, tagMaxLength, TAGS, TITLE_MAX_LENGTH, DESCRIPTION_LENGTH } from "./edittingType";
 
-const TITLE_MAX_LENGTH = 50
-const DESCRIPTION_LENGTH = 2000
+
 
 export default function CaseEditor({ defaultValue, id }: { defaultValue: DefaultValue, id: number | null }) {
   const [currentTag, setCurrentTag] = useState<string>("");
