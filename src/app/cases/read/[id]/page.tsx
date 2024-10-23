@@ -31,7 +31,7 @@ export default async function ReadCase({ params: { id } }: { params: { id: numbe
                 <div className="text-6xl font-bold">
                     {data?.title}
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center flex-shrink-0">
                     {data?.modified_at ? data?.modified_at.slice(0, 10) : data?.created_at.slice(0, 10)}
                 </div>
             </div>
@@ -70,8 +70,8 @@ export default async function ReadCase({ params: { id } }: { params: { id: numbe
                 </div>
             </div>
             <div className="mt-10">
-                <div className="text-3xl font-bold">Description</div>
-                <div className="text-2xl mt-2">
+                <div className="text-3xl font-bold h-full">Description</div>
+                <div className="text-2xl mt-2 whitespace-pre-wrap dangerouslySetInnerHTML={{ __html: data?.description }}">
                     {data?.description}
                 </div>
             </div>

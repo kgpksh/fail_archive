@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function CaseList({ data }: { data: CaseListItem[] }) {
   return (
-    <div className="w-full ">
+    <div className="w-full h-full">
       {data ?
         data.map((item: CaseListItem) => (
           <Link

@@ -10,7 +10,7 @@ export default async function Header() {
     } = await createClient().auth.getUser();
 
     return (
-        <nav className="flex w-full p-8 justify-between items-center">
+        <nav className="flex w-full p-8 justify-between items-center flex-grow-1">
             <Link href="/" className="text-lg font-bold ml-8">
                 Home
             </Link>
