@@ -4,6 +4,8 @@ import "./globals.css";
 import Header from "./header/header";
 import { Toaster } from "@/components/ui/toaster"
 import Footer from "./(footer)/footer";
+import GA4 from "./ga4";
+import { env } from "process";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     icon: "/favicon.png"
   }
 };
-// Commit for remove Vercel toolbar
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,6 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GA4 GOOGLE_TAG={process.env.GOOGLE_ANALYTICS_TAG_ID!}/>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
