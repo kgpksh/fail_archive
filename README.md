@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fail-archive
 
-## Getting Started
+## 1. 개요
+자신의 실패 경험을 공유 할 수 있는 게시판 위주의 커뮤니티
 
-First, run the development server:
+## 2. 기술 스택
+ Next.js, Typescript, Zod, Supabase(Postgres DB), Shadcn, Zustand, Vercel
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ ## 3. 구조
+1. 게시글에 태그기능을 추가해 분류 및 검색할 수 있게 했습니다. 또한 태그 검색중 자동 완성 백엔드 api를 추
+가 했습니다.
+2. Next.js의 instrumentation 기능을 이용해 태그 자동완성시 DB 조회가 아닌 서버내 메모리에서 찾도록 하였습
+니다. 최초 서버 실해시 Supabase fetch, 그 이후, realtime DB 연결로 새로운 태그를 배열에 추가 하는 구조를
+채택하였습니다.
+3. 클라이언트에서 태그 자동완성 기능에 디바운싱 라이브러리를 이용하여 불필요한 서버 부하를 최소화 하였습
+니다.
+4. Supabase는 PosgresDB에 접근하는 Javascript API를 제공합니다. 그렇기 때문에 일반적인 방식처럼 백엔드가
+DB 전면에 나서서 데이터 입출력을 통제하는 구조와는 다릅니다. Postgres function을 통한 RPC 호출과 RLS
+작업을 통하여 트랜잭션, 데이터 접근 인가를 구현하였습니다.
+5. 전체 등록된 태그를 관리를 위해 태그 테이블을 두었습니다. 각 게시글에 적용되는 태그는 Many to Many 구
+조 대신 게시글마다 반정규화된 배열 컬럼을 두고 GIN 인덱스를 적용하였습니다
