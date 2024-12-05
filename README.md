@@ -19,3 +19,7 @@ DB 전면에 나서서 데이터 입출력을 통제하는 구조와는 다릅�
 작업을 통하여 트랜잭션, 데이터 접근 인가를 구현하였습니다.
 5. 전체 등록된 태그를 관리를 위해 태그 테이블을 두었습니다. 각 게시글에 적용되는 태그는 Many to Many 구
 조 대신 게시글마다 반정규화된 배열 컬럼을 두고 GIN 인덱스를 적용하였습니다
+
+![1](https://github.com/user-attachments/assets/62e433ae-84d5-468d-8f90-6c145b63a654)
+![2 - 복사본 (2)](https://github.com/user-attachments/assets/84427492-24e4-433b-bc5d-66c754c506c6)
+
